@@ -15,7 +15,7 @@ def home():
     return redirect(url_for("listar_filmes"))
 
 
-@app.route('/filmes', methods=['GET'])
+@app.route('/filmes')
 def listar_filmes():
     try:
         conn = get_connection()
@@ -25,7 +25,7 @@ def listar_filmes():
         conn.close()
         return render_template("index.html", filmes=filmes)
     except Exception as ex:
-        print("ERRO LISTAR FILMES:", str(ex))
+        print("ERRO LISTAR:", ex)
         return "erro ao listar filmes"
 
 
@@ -33,40 +33,41 @@ def listar_filmes():
 def novo_filme():
     if request.method == "POST":
         try:
-            titulo = request.form["titulo"]
-            genero = request.form["genero"]
-            ano = request.form["ano"]
+            titulo = request.form.get("titulo")
+            genero = request.form.get("genero")
+            ano = request.form.get("ano")
 
             imagem = request.files.get("imagem")
 
             if not imagem or imagem.filename == "":
                 return "nenhuma imagem foi enviada"
 
-            extensoes = ["jpg", "jpeg", "png"]
-            extensao = imagem.filename.split(".")[-1].lower()
+            extensao = imagem.filename.rsplit('.', 1)[-1].lower()
+            if extensao not in ["jpg", "jpeg", "png"]:
+                return "formato inválido"
 
-            if extensao not in extensoes:
-                return "arquivo inválido"
+            nome_arquivo = f"{uuid.uuid4()}.{extensao}"
+            caminho_arquivo = os.path.join(UPLOAD_FOLDER, nome_arquivo)
 
-            nome_unico = f"{uuid.uuid4()}.{extensao}"
-            caminho = os.path.join(UPLOAD_FOLDER, nome_unico)
-            imagem.save(caminho)
+            imagem.save(caminho_arquivo)
 
-            caminho_db = f"uploads/{nome_unico}"
+            caminho_db = f"uploads/{nome_arquivo}"
 
             conn = get_connection()
             cursor = conn.cursor()
+
             cursor.execute(
                 "INSERT INTO filmes (titulo, genero, ano, url_capa) VALUES (%s, %s, %s, %s)",
-                [titulo, genero, ano, caminho_db]
+                (titulo, genero, ano, caminho_db)
             )
+
             conn.commit()
             conn.close()
 
             return redirect(url_for("listar_filmes"))
 
         except Exception as ex:
-            print("ERRO NOVO FILME:", str(ex))
+            print("ERRO SALVAR:", ex)
             return "erro ao salvar filme"
 
     return render_template("novo_filme.html")
@@ -77,14 +78,14 @@ def deletar_filme(id):
     try:
         conn = get_connection()
         cursor = conn.cursor()
-        cursor.execute("DELETE FROM filmes WHERE id = %s", [id])
+        cursor.execute("DELETE FROM filmes WHERE id = %s", (id,))
         conn.commit()
         conn.close()
         return redirect(url_for("listar_filmes"))
     except Exception as ex:
-        print("ERRO DELETAR:", str(ex))
+        print("ERRO DELETAR:", ex)
         return "erro ao deletar"
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     app.run(debug=True)
