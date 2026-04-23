@@ -1,105 +1,152 @@
-/* RESET */
+/* Definição de Variáveis para facilitar mudanças de cor */
+:root {
+    --primary-color: #e50914;
+    --primary-hover: #f40612;
+    --bg-body: #0f0f0f;
+    --bg-card: #1f1f1f;
+    --text-main: #ffffff;
+    --text-muted: #a3a3a3;
+    --transition: all 0.3s ease;
+}
+
+/* RESET & BASE */
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: Arial, sans-serif;
+    font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
 }
 
-/* BODY */
 body {
-    background-color: #141414;
-    color: #fff;
-    padding: 20px;
+    background-color: var(--bg-body);
+    color: var(--text-main);
+    line-height: 1.6;
+    padding: 40px 20px;
 }
 
-/* TÍTULO */
+/* TÍTULO PRINCIPAL */
 h1 {
     text-align: center;
-    margin-bottom: 20px;
+    font-size: 2.5rem;
+    margin-bottom: 40px;
+    font-weight: 800;
+    letter-spacing: -1px;
 }
 
-/* BOTÃO ADD */
-a {
-    display: inline-block;
-    margin-bottom: 20px;
-    padding: 10px 15px;
-    background-color: #e50914;
+/* BOTÃO DE AÇÃO PRINCIPAL */
+.btn-add {
+    display: block;
+    width: fit-content;
+    margin: 0 auto 40px;
+    padding: 12px 24px;
+    background-color: var(--primary-color);
     color: white;
     text-decoration: none;
-    border-radius: 5px;
+    border-radius: 4px;
+    font-weight: bold;
+    text-transform: uppercase;
+    font-size: 0.9rem;
+    transition: var(--transition);
 }
 
-/* GRID */
+.btn-add:hover {
+    background-color: var(--primary-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(229, 9, 20, 0.4);
+}
+
+/* GRID CONTAINER - Mais robusto que Flex */
 .container {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 20px;
-    justify-content: center;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 30px;
+    max-width: 1200px;
+    margin: 0 auto;
 }
 
-/* CARD */
+/* CARD COM EFEITO DE ELEVAÇÃO */
 .card {
-    background-color: #222;
-    padding: 15px;
-    border-radius: 10px;
-    width: 220px;
-    text-align: center;
-    transition: 0.3s;
+    background-color: var(--bg-card);
+    border-radius: 12px;
+    overflow: hidden; /* Garante que a imagem não saia do card */
+    transition: var(--transition);
+    position: relative;
+    border: 1px solid #333;
 }
 
 .card:hover {
-    transform: scale(1.05);
+    transform: translateY(-10px);
+    border-color: #555;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
 }
 
-/* IMAGEM */
+/* IMAGEM COM PROPORÇÃO CINEMATOGRÁFICA */
 .card img {
     width: 100%;
-    height: 300px;
+    aspect-ratio: 2 / 3; /* Mantém proporção de poster de filme */
     object-fit: cover;
-    border-radius: 8px;
+    display: block;
 }
 
-/* TEXTO */
+/* CONTEÚDO DO CARD */
+.card-content {
+    padding: 15px;
+}
+
 .card h2 {
-    margin: 10px 0;
+    font-size: 1.1rem;
+    margin-bottom: 8px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis; /* Corta o texto se for muito longo */
 }
 
 .card p {
-    color: #ccc;
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    margin-bottom: 15px;
 }
 
-/* BOTÃO EXCLUIR */
-button {
-    margin-top: 10px;
-    padding: 8px;
-    background-color: #e50914;
-    color: white;
-    border: none;
-    border-radius: 5px;
+/* BOTÃO EXCLUIR MAIS DISCRETO */
+.btn-delete {
+    width: 100%;
+    padding: 10px;
+    background-color: transparent;
+    color: var(--text-muted);
+    border: 1px solid #444;
+    border-radius: 6px;
     cursor: pointer;
+    transition: var(--transition);
+    font-weight: 500;
 }
 
-button:hover {
-    background-color: #b20710;
+.btn-delete:hover {
+    background-color: rgba(229, 9, 20, 0.1);
+    color: var(--primary-color);
+    border-color: var(--primary-color);
 }
 
-/* FORM */
-form {
-    max-width: 400px;
-    margin: auto;
-    text-align: center;
+/* FORMULÁRIO ESTILIZADO */
+.form-container {
+    max-width: 450px;
+    margin: 40px auto;
+    background: #1a1a1a;
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.3);
 }
 
 input {
     width: 100%;
-    padding: 10px;
+    padding: 12px 15px;
     margin: 10px 0;
-    border-radius: 5px;
-    border: none;
+    border-radius: 6px;
+    border: 1px solid #333;
+    background-color: #2b2b2b;
+    color: white;
+    outline: none;
 }
 
-input[type="file"] {
-    background-color: #fff;
-    color: #000;
+input:focus {
+    border-color: var(--primary-color);
 }
