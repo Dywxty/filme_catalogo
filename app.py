@@ -23,9 +23,9 @@ def allowed_file(filename):
 # ================= ROTAS =================
 
 # Teste API
-@app.route('/', methods=['GET'])
+@app.route('/')
 def home():
-    return jsonify({"message": "API de catalogo de filmes"}), 200
+    return redirect(url_for('listar_filmes'))
 
 
 # Ping
@@ -39,7 +39,7 @@ def ping():
 # Listar filmes
 @app.route('/filmes', methods=['GET'])
 def listar_filmes():
-    sql = "SELECT * FROM filmes"
+    return "cheguei aqui"
     try:
         conn = get_connection()
         cursor = conn.cursor(cursor_factory=RealDictCursor)
