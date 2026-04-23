@@ -39,7 +39,7 @@ def ping():
 # Listar filmes
 @app.route('/filmes', methods=['GET'])
 def listar_filmes():
-    return "cheguei aqui"
+    sql = "SELECT * FROM filmes"
     try:
         conn = get_connection()
         cursor = conn.cursor(cursor_factory=RealDictCursor)
@@ -48,8 +48,8 @@ def listar_filmes():
         conn.close()
         return render_template("index.html", filmes=filmes)
     except Exception as ex:
-        print('erro: ', str(ex))
-        return jsonify({"message": "erro ao listar filmes"}), 500
+        print("ERRO LISTAR FILMES:", str(ex))
+        return "erro ao listar filmes"
 
 
 # ================= NOVO FILME COM UPLOAD =================
