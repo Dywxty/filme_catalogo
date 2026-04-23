@@ -1,12 +1,11 @@
 import os
 import uuid
-from flask import Flask, request, jsonify, render_template, redirect, url_for
+from flask import Flask, request, render_template, redirect, url_for
 from psycopg2.extras import RealDictCursor
 from database import get_connection
 
 app = Flask(__name__)
 
-# garante que a pasta uploads existe
 UPLOAD_FOLDER = "static/uploads"
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
@@ -18,11 +17,10 @@ def home():
 
 @app.route('/filmes', methods=['GET'])
 def listar_filmes():
-    sql = "SELECT * FROM filmes"
     try:
         conn = get_connection()
         cursor = conn.cursor(cursor_factory=RealDictCursor)
-        cursor.execute(sql)
+        cursor.execute("SELECT * FROM filmes")
         filmes = cursor.fetchall()
         conn.close()
         return render_template("index.html", filmes=filmes)
@@ -33,41 +31,42 @@ def listar_filmes():
 
 @app.route("/novo", methods=["GET", "POST"])
 def novo_filme():
-    sql = "INSERT INTO filmes (titulo, genero, ano, url_capa) VALUES (%s, %s, %s, %s)"
-
     if request.method == "POST":
-        titulo = request.form["titulo"]
-        genero = request.form["genero"]
-        ano = request.form["ano"]
-
-        imagem = request.files.get("imagem")
-
-        if not imagem or imagem.filename == "":
-            return "nenhuma imagem foi enviada"
-
-        extensoes_permitidas = ["jpg", "jpeg", "png"]
-        extensao = imagem.filename.split(".")[-1].lower()
-
-        if extensao not in extensoes_permitidas:
-            return "arquivo inválido (use jpg, jpeg ou png)"
-
-        # gera nome único (hash)
-        nome_unico = f"{uuid.uuid4()}.{extensao}"
-
-        caminho_arquivo = os.path.join(UPLOAD_FOLDER, nome_unico)
-        imagem.save(caminho_arquivo)
-
-        caminho_db = f"/static/uploads/{nome_unico}"
-
         try:
+            titulo = request.form["titulo"]
+            genero = request.form["genero"]
+            ano = request.form["ano"]
+
+            imagem = request.files.get("imagem")
+
+            if not imagem or imagem.filename == "":
+                return "nenhuma imagem foi enviada"
+
+            extensoes = ["jpg", "jpeg", "png"]
+            extensao = imagem.filename.split(".")[-1].lower()
+
+            if extensao not in extensoes:
+                return "arquivo inválido"
+
+            nome_unico = f"{uuid.uuid4()}.{extensao}"
+            caminho = os.path.join(UPLOAD_FOLDER, nome_unico)
+            imagem.save(caminho)
+
+            caminho_db = f"uploads/{nome_unico}"
+
             conn = get_connection()
             cursor = conn.cursor()
-            cursor.execute(sql, [titulo, genero, ano, caminho_db])
+            cursor.execute(
+                "INSERT INTO filmes (titulo, genero, ano, url_capa) VALUES (%s, %s, %s, %s)",
+                [titulo, genero, ano, caminho_db]
+            )
             conn.commit()
             conn.close()
+
             return redirect(url_for("listar_filmes"))
+
         except Exception as ex:
-            print("ERRO SALVAR FILME:", str(ex))
+            print("ERRO NOVO FILME:", str(ex))
             return "erro ao salvar filme"
 
     return render_template("novo_filme.html")
