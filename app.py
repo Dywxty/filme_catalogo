@@ -1,7 +1,7 @@
 import os
 import uuid
+import psycopg
 from flask import Flask, request, render_template, redirect, url_for
-from psycopg2.extras import RealDictCursor
 from database import get_connection
 
 app = Flask(__name__)
@@ -19,11 +19,14 @@ def home():
 def listar_filmes():
     try:
         conn = get_connection()
-        cursor = conn.cursor(cursor_factory=RealDictCursor)
+        cursor = conn.cursor(row_factory=psycopg.rows.dict_row)
+
         cursor.execute("SELECT * FROM filmes")
         filmes = cursor.fetchall()
+
         conn.close()
         return render_template("index.html", filmes=filmes)
+
     except Exception as ex:
         print("ERRO LISTAR:", ex)
         return "erro ao listar filmes"
@@ -78,14 +81,17 @@ def deletar_filme(id):
     try:
         conn = get_connection()
         cursor = conn.cursor()
+
         cursor.execute("DELETE FROM filmes WHERE id = %s", (id,))
         conn.commit()
         conn.close()
+
         return redirect(url_for("listar_filmes"))
+
     except Exception as ex:
         print("ERRO DELETAR:", ex)
         return "erro ao deletar"
 
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 5000)))
+    app.run(debug=True)

@@ -1,18 +1,15 @@
-import psycopg2
 import os
+import psycopg
 
 def get_connection():
     DATABASE_URL = os.environ.get("DATABASE_URL")
 
     if DATABASE_URL:
-        return psycopg2.connect(
-            DATABASE_URL,
-            sslmode="require"
-        )
+        return psycopg.connect(DATABASE_URL)
 
-    return psycopg2.connect(
+    return psycopg.connect(
         host="localhost",
         user="postgres",
         password="1234",
-        database="catalogo_filmes"
+        dbname="catalogo_filmes"
     )
