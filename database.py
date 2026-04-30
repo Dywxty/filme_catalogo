@@ -5,7 +5,10 @@ def get_connection():
     DATABASE_URL = os.environ.get("DATABASE_URL")
 
     if DATABASE_URL:
-        return psycopg2.connect(DATABASE_URL)
+        return psycopg2.connect(
+            DATABASE_URL,
+            sslmode="require"
+        )
 
     return psycopg2.connect(
         host="localhost",
