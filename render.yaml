@@ -8,5 +8,5 @@ services:
     envVars:
       - key: DATABASE_URL
         sync: false
-    runtime: python
-    pythonVersion: 3.11
+      - key: PYTHON_VERSION
+        value: 3.11.9
