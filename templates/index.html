@@ -3,37 +3,44 @@
 <head>
     <meta charset="UTF-8">
     <title>Catálogo</title>
-    <link rel="stylesheet" href="../static/style.css">
+
+    <!-- CSS CORRETO -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
+
 <body>
     <div class="container">
 
-<h1>Filmes</h1>
+        <h1>Filmes</h1>
 
-<a href="{{ url_for('novo_filme') }}">Adicionar Filme</a>
-
-<hr>
-
-{% for filme in filmes %}
-    <div>
-        <h2>{{ filme.titulo }}</h2>
-        <p>{{ filme.genero }}</p>
-        <p>{{ filme.ano }}</p>
-
-        {% if filme.url_capa %}
-            <img src="{{ url_for('static', filename=filme.url_capa) }}" width="200">
-        {% endif %}
-
-        <form action="{{ url_for('deletar_filme', id=filme.id) }}" method="POST">
-            <button type="submit">Excluir</button>
-        </form>
+        <a href="{{ url_for('novo_filme') }}">Adicionar Filme</a>
 
         <hr>
-    </div>
-{% else %}
-    <p>Nenhum filme cadastrado</p>
-{% endfor %}
 
-</div>
+        {% for filme in filmes %}
+
+        <div class="filme">
+
+            <h2>{{ filme.titulo }}</h2>
+            <p>{{ filme.genero }}</p>
+            <p>{{ filme.ano }}</p>
+
+            {% if filme.url_capa %}
+                <img src="{{ url_for('static', filename='uploads/' + filme.url_capa.split('/')[-1]) }}" width="200">
+            {% endif %}
+
+            <form action="{{ url_for('deletar_filme', id=filme.id) }}" method="POST">
+                <button type="submit">Excluir</button>
+            </form>
+
+            <hr>
+
+        </div>
+
+        {% else %}
+            <p>Nenhum filme cadastrado</p>
+        {% endfor %}
+
+    </div>
 </body>
 </html>
